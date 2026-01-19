@@ -2,12 +2,12 @@ services:
   app:
     image: tolgee/tolgee:latest
     volumes:
-      - ./data:/data
-      - ./config.yaml:/config.yaml
+      - tolgee_data:/data              # Named volume for Tolgee data
+      - ./config.yaml:/config.yaml     # Keep config as bind mount for easy editing
     ports:
       - '8089:8080'
     environment:
-      spring.config.additional-location: file:///config.yaml # <--- this line
+      spring.config.additional-location: file:///config.yaml
     deploy:
       restart_policy:
         condition: on-failure
@@ -20,6 +20,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data  # Named volume for PostgreSQL
     ports:
-      - '25432:5432' # <-- If you want to access your postgres from outside of docker network
+      - '25432:5432'
+
+# Named volumes - Docker manages these internally
+volumes:
+  tolgee_data:
+    driver: local
+  postgres_data:
+    driver: local
