@@ -1,0 +1,25 @@
+services:
+  app:
+    image: tolgee/tolgee:latest
+    volumes:
+      - ./data:/data
+      - ./config.yaml:/config.yaml
+    ports:
+      - '8089:8080'
+    environment:
+      spring.config.additional-location: file:///config.yaml # <--- this line
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - db
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - '25432:5432' # <-- If you want to access your postgres from outside of docker network
